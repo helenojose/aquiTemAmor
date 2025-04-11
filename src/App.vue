@@ -6,6 +6,13 @@
   <router-view></router-view>
 </template>
 
-<style scoped>
+<style >
+
+
+body {
+  overflow: hidden;
+  background-color: #e3e3e3;
+}
+
 
 </style>
