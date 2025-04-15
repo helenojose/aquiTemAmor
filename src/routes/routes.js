@@ -4,11 +4,12 @@ import login from "../components/login/login.vue"
 import homeSecretaria from "../components/HomeSecretaria/homeSecretaria.vue"
 import { createRouter, createWebHashHistory } from 'vue-router';
 
+
 const routes = [
   { path: '/', component: Home },
   {path: '/presenceCalendar', component: PresenceCalendar},
   {path: '/login', component: login},
-  {path: '/homeSecretaria', component: homeSecretaria}
+  {path: '/homeSecretaria', component: homeSecretaria},
 ];
 
 const router = createRouter({
