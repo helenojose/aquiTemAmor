@@ -34,10 +34,10 @@ export default {
 
 <style scoped>
 .home-container {
-  width: 150px;
+   width: 150px;
   height: 100vh;
   background-color: #22C574;
-  position: fixed; /* fixa no topo da página */
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 999;
