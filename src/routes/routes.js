@@ -4,6 +4,7 @@ import login from "../components/login/login.vue"
 import homeSecretaria from "../components/HomeSecretaria/homeSecretaria.vue"
 import FichaMatricula from "../components/FichaMatricula/FichaMatricula.vue";
 import { createRouter, createWebHashHistory } from 'vue-router';
+import CadastroAluno from "../components/CadastroAluno/CadastroAluno.vue";
 
 
 const routes = [
@@ -12,6 +13,7 @@ const routes = [
   {path: '/login', component: login},
   {path: '/homeSecretaria', component: homeSecretaria},
   { path: '/matricula', name: 'FichaMatricula', component: FichaMatricula },
+  { path:'/cadastro', name:'CadastroAluno', component:CadastroAluno},
 ];
 
 const router = createRouter({
