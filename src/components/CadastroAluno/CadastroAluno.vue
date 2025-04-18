@@ -394,7 +394,9 @@
   /* Main Content */
   .main-content {
     flex-grow: 1;
-    padding: 20px;
+  padding: 20px;
+  overflow-y: auto;
+  max-height: 100vh;
   }
   
   /* Header */
