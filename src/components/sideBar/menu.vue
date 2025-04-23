@@ -1,26 +1,29 @@
 <template>
-    <div class="home-container">
-        <div class="img-content">  
-            <img src="../../assets/image/Logo.png" alt="">
-        </div>
-        <div class="menu-content">
-            <div class="icone">
-                <i class="bi bi-house"></i>
-                <p>HOME</p> 
-            </div>
-            <div class="icone">
-                <i class="bi bi-clipboard-check"></i>
-                <p>NOVA MATRICULA</p>
-            </div>
-            <div class="icone">
-                <i class="bi bi-person-fill-add"></i>
-                <p>REGISTRO DE PRESENÇA</p>
-            </div>
-            </div>
-            <div class="exit">
-                <i class="bi bi-box-arrow-left">
-                </i><p>SAIR</p>
+ <div>
+    <div class="menu-placeholder"></div>
+      <div class="home-container">
+          <div class="img-content">  
+              <img src="../../assets/image/Logo.png" alt="">
           </div>
+          <div class="menu-content">
+              <div class="icone">
+                  <i class="bi bi-house"></i>
+                  <p>HOME</p> 
+              </div>
+              <div class="icone">
+                  <i class="bi bi-clipboard-check"></i>
+                  <p>NOVA MATRICULA</p>
+              </div>
+              <div class="icone">
+                  <i class="bi bi-person-fill-add"></i>
+                  <p>REGISTRO DE PRESENÇA</p>
+              </div>
+              </div>
+              <div class="exit">
+                  <i class="bi bi-box-arrow-left">
+                  </i><p>SAIR</p>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -33,11 +36,19 @@ export default {
 </script>
 
 <style scoped>
+
+.menu-placeholder {
+  width: 150px;
+  height: 100vh;
+  float: left;
+}
+
+
 .home-container {
   width: 150px;
   height: 100vh;
   background-color: #22C574;
-  position: fixed; /* fixa no topo da página */
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 999;
