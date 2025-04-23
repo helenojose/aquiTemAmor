@@ -2,7 +2,7 @@
   <h1>{{ tituloPagina }}</h1>
 </template>
 
-<script setup lang='ts'>
+<script setup>
   import { usePresenceCalendar } from './presenceCalendarStore';
   import { storeToRefs } from 'pinia';
 

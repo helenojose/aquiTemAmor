@@ -3,7 +3,7 @@ import { ref } from "vue";
 
 export const usePresenceCalendar = defineStore('PresenceCalendar', ()=>{
 
-  const tituloPagina = ref("Teste");
+  const tituloPagina = ref("Calendário de Presença");
 
 
 
