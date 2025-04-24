@@ -7,7 +7,7 @@
             <div class="img-form">
                 <img src="../../assets/image/Logo.png" alt="">
             </div>
-            <form>
+            <form @submit.prevent="handleLogin">
                 <div class="form-group">
                     <label for="login-user">DIGITE SEU USUÁRIO E SENHA PARA FAZER LOGIN:</label>
                 </div>
@@ -21,7 +21,7 @@
                     </button>
                 </div>
                 <div class="form-button">
-                    <button> Entrar </button>
+                  <button type="submit">Entrar</button>
                 </div>    
             </form>
         </div>
@@ -30,11 +30,18 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const showPassword = ref(false)
+const router = useRouter()
 
 function togglePassword() {
   showPassword.value = !showPassword.value
+}
+
+function handleLogin() {
+  // Aqui você poderia validar usuário/senha antes de redirecionar
+  router.push('/homeSecretaria')
 }
 </script>
 
