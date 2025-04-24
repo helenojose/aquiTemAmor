@@ -14,10 +14,12 @@
                   <i class="bi bi-clipboard-check"></i>
                   <p>NOVA MATRICULA</p>
               </div>
-              <div class="icone">
-                  <i class="bi bi-person-fill-add"></i>
-                  <p>REGISTRO DE PRESENÇA</p>
-              </div>
+                  <router-link class="menuText" to="/frequenciaAtividade">
+                    <div class="icone">
+                      <i class="bi bi-person-fill-add"></i>
+                      <p>REGISTRO DE PRESENÇA</p>
+                    </div>
+                  </router-link>
               </div>
               <div class="exit">
                   <i class="bi bi-box-arrow-left">
@@ -83,6 +85,9 @@ export default {
 .icone:hover{
   background-color: #fff;
   color: rgb(71, 71, 71);
+  .menuText{
+    color:rgb(71, 71, 71);
+  }
 }
 
 .icone:hover i,
@@ -124,6 +129,11 @@ export default {
   font-size: 11px;
 }
 
+.menuText{
+  color: white;
+  text-decoration: none;
+  font-size: 10px;
+}
 
 @media (max-width: 1440px) {
   .home-container {
