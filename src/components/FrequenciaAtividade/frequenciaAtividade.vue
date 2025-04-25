@@ -23,21 +23,59 @@
       </div>
 
       <div class="coluna">
-        <div class="rotulo">
+        <div @click="FrequenciaAtividade.togglePopModalidade" style="position: relative; cursor: pointer;" class="rotulo">
           <span class="innerTextRotulo">Filtro Modalidade</span>
+          <i class="bi bi-funnel-fill"></i>
+
+          <div v-if="isOpenModalidade" class="filterPopUpModalidade">
+            <div class="InsidefilterPopUpModalidade">
+              <div @click="FrequenciaAtividade.setFilter('Reforço', turnoFilter)">
+                Reforço
+              </div>
+              <div @click="FrequenciaAtividade.setFilter('Muai Tay', turnoFilter)">
+                Muai Tay
+              </div>
+              <div @click="FrequenciaAtividade.setFilter('Natação', turnoFilter)" >
+                Natação
+              </div>
+              <div @click="FrequenciaAtividade.setFilter('Ballet', turnoFilter)" >
+                Ballet
+              </div>
+              <div @click="FrequenciaAtividade.setFilter('Judô', turnoFilter)" >
+                Judô
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
       <div class="coluna">
-        <div class="rotulo">
+        <div @click="FrequenciaAtividade.togglePopTurno" style="position: relative; cursor: pointer;" class="rotulo">
           <span class="innerTextRotulo">Filtro Turno</span>
+          <i class="bi bi-funnel-fill"></i>
+
+          <div v-if="isOpenTurno" class="filterPopUpTurno">
+            <div class="InsidefilterPopUpTurno">
+              <div @click="FrequenciaAtividade.setFilter(modalidadeFilter,'manhã')">
+                Manhã
+              </div>
+              <div @click="FrequenciaAtividade.setFilter(modalidadeFilter,'tarde')">
+                Tarde
+              </div>
+              <div @click="FrequenciaAtividade.setFilter(modalidadeFilter,'noite')" >
+                Noite
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
 
     <!-- Iterando sobre os dados de cada aluno -->
     <div class="scrollArea">
-      <div v-for="(aluno, index) in dataAlunos" :key="index" class="insideContainer">
+      <div v-for="(aluno, index) in alunos" :key="index" class="insideContainer">
         
         <!-- Colunas para cada dado do aluno -->
         <div class="coluna">
@@ -102,15 +140,98 @@
   import { ref } from 'vue';
   import Menu from '../sideBar/menu.vue';
   import { useFrequenciaAtividade } from './frequenciaAtividadeStore';
-import { storeToRefs } from 'pinia';
+  import { storeToRefs } from 'pinia';
 
 
   const FrequenciaAtividade = useFrequenciaAtividade();
-  const { dataAlunos, alunosModificados } = storeToRefs(FrequenciaAtividade);
+  const { dataAlunos, alunosModificados, isOpenModalidade, modalidadeFilter, alunos, isOpenTurno, turnoFilter } = storeToRefs(FrequenciaAtividade);
 
 </script>
 
 <style scoped>
+
+
+  .InsidefilterPopUpTurno div:hover{
+    background-color: #4e4e4e;
+    color: white;
+  }
+
+  .InsidefilterPopUpModalidade div:hover{
+    background-color: #4e4e4e;
+    color: white;
+  }
+
+  .InsidefilterPopUpTurno div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 1px #4e4e4e;
+    text-align: center;
+    text-wrap: nowrap;
+    margin-left: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  .InsidefilterPopUpModalidade div{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: solid 1px #4e4e4e;
+    text-align: center;
+    text-wrap: nowrap;
+    margin-left: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  .InsidefilterPopUpTurno{
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    font-family: lexend;
+    background-color: white;
+    color: #4e4e4e;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .InsidefilterPopUpModalidade{
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    font-family: lexend;
+    background-color: white;
+    color: #4e4e4e;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .filterPopUpTurno{
+    max-height: 350px;
+    max-width: 180px;
+    position: absolute;
+    top: -50px;
+    left: 100px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .filterPopUpModalidade{
+    max-height: 350px;
+    max-width: 180px;
+    position: absolute;
+    top: -50px;
+    left: 100px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+  }
+
   .tittle{
     margin: 0;
   }
@@ -237,5 +358,6 @@ import { storeToRefs } from 'pinia';
 .checkbox-container input:checked ~ .checkmark::after {
   display: block;
 }
+
 
 </style>

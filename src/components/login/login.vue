@@ -41,7 +41,7 @@ function togglePassword() {
 
 function handleLogin() {
   // Aqui você poderia validar usuário/senha antes de redirecionar
-  router.push('/homeSecretaria')
+  router.push('/')
 }
 </script>
 

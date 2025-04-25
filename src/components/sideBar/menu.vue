@@ -6,20 +6,24 @@
               <img src="../../assets/image/Logo.png" alt="">
           </div>
           <div class="menu-content">
-              <div class="icone">
-                  <i class="bi bi-house"></i>
-                  <p>HOME</p> 
-              </div>
-              <div class="icone">
-                  <i class="bi bi-clipboard-check"></i>
-                  <p>NOVA MATRICULA</p>
-              </div>
-                  <router-link class="menuText" to="/frequenciaAtividade">
-                    <div class="icone">
-                      <i class="bi bi-person-fill-add"></i>
-                      <p>REGISTRO DE PRESENÇA</p>
-                    </div>
-                  </router-link>
+                <router-link to="/">
+                  <div class="icone">
+                    <i class="bi bi-house"></i>
+                    <p>HOME</p> 
+                  </div>
+                </router-link>
+                <router-link to="cadastro">
+                  <div class="icone">
+                    <i class="bi bi-clipboard-check"></i>
+                    <p>NOVA MATRICULA</p>
+                  </div>
+                </router-link>
+                <router-link class="menuText" to="/frequenciaAtividade">
+                  <div class="icone">
+                    <i class="bi bi-person-fill-add"></i>
+                    <p>REGISTRO DE PRESENÇA</p>
+                  </div>
+                </router-link>
               </div>
               <div class="exit">
                   <i class="bi bi-box-arrow-left">
