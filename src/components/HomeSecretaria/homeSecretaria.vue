@@ -37,20 +37,32 @@
           </div>
           
           <ul>
-            <li v-for="student in filteredStudents" :key="student.id">
-              Nº {{ student.id < 10 ? '0' + student.id : student.id }}
+            <li v-for="(student, index) in filteredStudents" :key="student.id">
+             <div class="numeros">
+                Nº {{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}
+             </div> 
             </li>
           </ul>
         </div>
         <div class="student-column">
           <div class="text-fixed1">
-            <h2>Aluno</h2>
+            <h2>Alunos Matriculados</h2>
           </div>
           
           <ul>
-            <li v-for="student in filteredStudents" :key="student.id + '-name'">
-              {{ student.name }}
-            </li>
+            <li v-for="student in filteredStudents" :key="student.id + '-name'" @click="goToFicha(student) " style="cursor: pointer;">
+              <div class="student-name">{{ student.name }}</div>
+              <div class="student-modalidades">
+              <span
+                v-for="(mod, index) in student.modalidade"
+                :key="index"
+                class="modal-badge"
+              >
+                {{ mod }}
+              </span>
+            </div>
+          </li>
+            
           </ul>
         </div>
       </div>
@@ -60,6 +72,10 @@
 
 <script>
 import Menu from "../sideBar/menu.vue";
+import { db } from "../../Firebase/FIrebase";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../Firebase/FIrebase";
 
 export default {
   components: { Menu },
@@ -81,33 +97,68 @@ export default {
   data() {
     return {
       searchQuery: '',
-      students: [
-        { id: 1, name: 'MARIA BLA BLA BLA', modalidade: 'ballet' },
-        { id: 2, name: 'PEDRO BLA BLA BLA', modalidade: 'judô' },
-        { id: 3, name: 'Heleno Teste', modalidade: 'natação' },
-        { id: 4, name: 'João Silva', modalidade: 'reforço' },
-        { id: 5, name: 'Ana Pereira', modalidade: 'muai tay' },
-        { id: 6, name: 'Lucas Souza', modalidade: 'ballet' },
-        { id: 7, name: 'Carla Mendes', modalidade: 'judô' },
-        { id: 8, name: 'Rafael Gomes', modalidade: 'natação' },
-        { id: 9, name: 'Beatriz Lima', modalidade: 'reforço' },
-        { id: 10, name: 'Gabriel Costa', modalidade: 'muai tay' },
-        { id: 9, name: 'Beatriz Lima', modalidade: 'reforço' },
-        { id: 9, name: 'Beatriz Lima', modalidade: 'reforço' },
-        { id: 9, name: 'Beatriz Lima', modalidade: 'reforço' },
-        { id: 9, name: 'Beatriz Lima', modalidade: 'reforço' },
-      ],
+      students: [],
       filterOptions: [
-        { label: 'Reforço',   value: 'reforço' },
-        { label: 'Muai Tay',  value: 'muai tay' },
-        { label: 'Natação',   value: 'natação' },
-        { label: 'Ballet',    value: 'ballet' },
-        { label: 'Judô',      value: 'judô' }
+        { label: 'REFORÇO',   value: 'REFORÇO' },
+        { label: 'MUAI TAY',  value: 'MUAI TAY' },
+        { label: 'NATAÇÃO',   value: 'NATAÇÃO' },
+        { label: 'BALLET',    value: 'BALLET' },
+        { label: 'JUDÔ',      value: 'JUDÔ' }
       ],
       selectedFilters: [],
       showFilterMenu: false
     };
   },
+  mounted() {
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+
+    const profSnapshot = await getDocs(collection(db, "professores"));
+    let usuarioAtual = null;
+
+    profSnapshot.forEach(doc => {
+      if (doc.id === user.uid) {
+        usuarioAtual = doc.data();
+      }
+    });
+
+    if (!usuarioAtual) return;
+
+    const alunosCollection = collection(db, "alunos");
+
+    onSnapshot(alunosCollection, (snapshot) => {
+      const alunos = [];
+
+      snapshot.forEach(doc => {
+        const aluno = doc.data();
+
+        if (!aluno.aluno || !aluno.aluno.nome) return; // pula documentos inválidos
+
+        const alunoModalidades = Array.isArray(aluno.academico) 
+          ? aluno.academico.map(a => a.curso) 
+          : [];
+
+        const profModalidades = usuarioAtual.modalidades || [];
+
+        if (
+          usuarioAtual.tipo === "adm" ||
+          alunoModalidades.some(modalidade => profModalidades.includes(modalidade))
+        ) {
+          alunos.push({
+            id: doc.id,
+            name: aluno.aluno.nome,
+            modalidade: alunoModalidades,
+          });
+        }
+      });
+
+
+      this.students = alunos;
+    });
+  });
+},
+
+
   computed: {
     filteredStudents() {
       // Primeiro, filtra pelo nome
@@ -117,7 +168,7 @@ export default {
       // Em seguida, aplica filtros de modalidade se houver
       if (this.selectedFilters.length) {
         results = results.filter(s =>
-          this.selectedFilters.includes(s.modalidade)
+          s.modalidade.some (mod => this.selectedFilters.includes(mod))
         );
       }
       return results;
@@ -129,20 +180,61 @@ export default {
     },
     closeFilterMenu() {
       this.showFilterMenu = false;
+    },
+    goToFicha(aluno){
+      if(!aluno || !aluno.id){  
+        console.error("Aluno invalido:", aluno)
+        return
+        }
+      this.$router.push({name: 'FichaMatricula', params: {id: aluno.id } });
     }
   }
-};
+}
 </script>
 
 <style scoped>
+
+.student-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.student-name {
+  font-weight: 500;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.student-modalidades {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  max-width: 100%;
+}
+
+.modal-badge {
+  background-color: #118678;
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
 .main-content {
-  width: 1006px;
-  height: 777px;
-  margin: 50px 0 0 333px;
+  width: 90%;
+  height: 90vh;
+  margin: 20px 0 0 250px;
   display: grid;
   grid-template-rows: auto auto 1fr;
   gap: 1.5rem;
   font-family: lexend;
+  font-size: 25px;
+  
 }
 
 .search-bar {
@@ -150,25 +242,28 @@ export default {
   border-radius: .7rem;
   color: #fff;
   display: grid;
-  grid-template-columns: 800px 80px;
+  grid-template-columns: 1210px 90px;
   gap: 1.5rem;
+  font-size: 20px;
 
 }
 
 .coluna{
- background: #118678;
- padding-left: .1rem;
+  background: #118678;
+  padding-left: .1rem;
+  padding-top: .5rem;
   border-top-left-radius: 1rem;
   border-bottom-left-radius: 1rem;
-
+  font-size: 20px;
 }
 
 .coluna3{
   background-color: #118678;
   text-align: center;
-  padding: .1rem .1rem;
+  padding: .5rem .1rem ;
   border-top-right-radius: 1rem;
   border-bottom-right-radius: 1rem;
+  font-size: 20px;
 }
 
 .filter-btn {
@@ -181,7 +276,7 @@ export default {
 
 .filter-menu {
   position: absolute;
-  top: 320%;
+  top: 220%;
   left: 78%;
   transform: translateY(-50%);
   background: #fff;
@@ -227,14 +322,15 @@ input::placeholder{
 /* Lista de alunos */
 .students-container {
   margin-top: 4rem;
-  width: 80%;
+  width: 70%;
   display: grid;
-  grid-template-columns: 20% 1fr;
+  grid-template-columns: 15% 1fr;
   gap: 1rem;
   overflow-y: auto;
   padding-right: 7rem;
   scrollbar-width: unset;             
   scrollbar-color: #118678 #e0e0e0;  
+  font-size: 20px;
 }
 
 .students-container::-webkit-scrollbar {
@@ -258,8 +354,8 @@ input::placeholder{
 
 .text-fixed h2 {
   margin-top: -4rem;
-  font-size: 1rem;
-  width: 140px;
+  font-size: 20px;
+  width: 160px;
   background-color: #118678;
   padding: .7rem;
   border-radius: .5rem;
@@ -270,8 +366,8 @@ input::placeholder{
 
 .text-fixed1 h2 {
   margin-top: -4rem;
-  font-size: 1rem;
-  width: 600px;
+  font-size: 20px;
+  width: 980px;
   background-color: #118678;
   padding: .7rem;
   border-radius: .5rem;
@@ -281,7 +377,7 @@ input::placeholder{
 }
 
 .quantity-column ul{
-  text-align: center
+  text-align: center;
 }
 
 
@@ -296,33 +392,65 @@ input::placeholder{
 }
 
 .quantity-column ul li,
-.student-column ul li {
+.student-column ul li{
   background: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: .5rem;
+  padding: 1rem 1rem;
+  border-radius: 1rem;
+  height: 75px; /* ajuste conforme o tamanho da fonte */
+  box-sizing: border-box;
+}
+.quantity-column ul li{
+  padding-top: 1.5rem;
+}
+
+.numeros{
+  font-size: 23px;
 }
 
 /* Responsive */
 @media (max-width: 1366px) {
   .main-content {
-    margin-top: 1px;
-    margin-right: 5px;
-    width: 780px;
+    width: 800px;
     height: 550px;
+    font-size: 20px;
+    margin: 0;
   }
   .search-bar{
-    grid-template-columns: 650px 70px;
+    grid-template-columns: 830px 70px;
     gap: 1rem;
   }
   .students-container {
-    grid-template-columns: 100px 540px;
-    width: 90%;
+    grid-template-columns: 120px 700px;
+    width: 95%;
+    padding-right: 2rem;
   }
   .text-fixed h2{
-    width: 80px;
+    width: 100px;
+    font-size: 14px;
   }
   .text-fixed1 h2{
-    width: 515px;
+    width: 675px;
+    font-size: 15px;
+  }
+  .student-modalidades{
+    color: #118678;
+    padding-left: .2rem;
+  }
+  .student-name{
+    padding-right: .5rem;
+    font-size: 13px;
+  }
+  .modal-badge {
+    font-size: .55rem;
+  }
+  .quantity-column ul li,
+  .student-column ul li{
+    padding-top: .3rem;
+    height: 45px;
+  }
+  .numeros{
+    padding-top: .5rem;
+    font-size: 15px;
   }
 }
 
@@ -342,5 +470,6 @@ input::placeholder{
     width: 80%;
     scrollbar-width: unset;  
   }
+  
 }
 </style>

@@ -5,15 +5,19 @@ import FichaMatricula from "../components/FichaMatricula/FichaMatricula.vue";
 import { createRouter, createWebHashHistory } from 'vue-router';
 import CadastroAluno from "../components/CadastroAluno/CadastroAluno.vue";
 import frequenciaAtividade from "../components/FrequenciaAtividade/frequenciaAtividade.vue";
+import CadastroProfessor from "../components/login/CadastroProfessor.vue";
+import teste from "../components/login/teste.vue";
 
 
 const routes = [
   { path: '/', component: homeSecretaria },
   {path: '/presenceCalendar', component: PresenceCalendar},
   {path: '/login', component: login},
-  { path: '/matricula', name: 'FichaMatricula', component: FichaMatricula },
+  { path: '/matricula/:id', name: 'FichaMatricula', component: () => import('../components/FichaMatricula/FichaMatricula.vue'), props: true},
   { path:'/cadastro', name:'CadastroAluno', component:CadastroAluno},
-  { path:'/frequenciaAtividade', name:'frequenciaAtividade', component:frequenciaAtividade}
+  { path:'/frequenciaAtividade', name:'frequenciaAtividade', component:frequenciaAtividade},
+  { path: '/CadastroProfessor', name: 'CadastroProfessor', component:CadastroProfessor},
+  {path: '/teste', name:'teste', component:teste}
 ];
 
 const router = createRouter({

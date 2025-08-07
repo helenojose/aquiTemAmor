@@ -12,10 +12,10 @@
                     <label for="login-user">DIGITE SEU USUÁRIO E SENHA PARA FAZER LOGIN:</label>
                 </div>
                 <div class="form-group">
-                    <input id="login-user" type="text" placeholder="Usuário">
+                    <input v-model="loginEmail" id="login-user" type="email" placeholder="Usuário" />
                 </div>
                 <div class="form-group password-group">
-                    <input :type="showPassword ? 'password' : 'text'" id="password" placeholder="Senha"/>
+                    <input v-model="loginSenha" :type="showPassword ? 'password' : 'text'" id="password" placeholder="Senha"/>
                     <button type="button" class="toggle-password" @click="togglePassword">
                         <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
                     </button>
@@ -29,20 +29,47 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { useRouter } from 'vue-router';
+import { ref } from "vue";
 
-const showPassword = ref(false)
-const router = useRouter()
+const loginEmail = ref("");
+const loginSenha = ref("");
+const auth = getAuth();
+const db = getFirestore();
+const router = useRouter();
 
-function togglePassword() {
-  showPassword.value = !showPassword.value
+async function handleLogin() {
+  try {
+    const email = loginEmail.value;     // campos que você vai criar no template
+    const senha = loginSenha.value;
+
+    const credenciais = await signInWithEmailAndPassword(auth, email, senha);
+    const uid = credenciais.user.uid;
+
+    // Pega os dados do usuário no Firestore
+    const docRef = doc(db, "professores", uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const usuario = docSnap.data();
+
+      if (usuario.tipo === "professor") {
+        router.push("/"); // rota da tela de presença
+      } else if (usuario.tipo === "adm") {
+        router.push("/"); // exemplo de outra rota para adm
+      } else {
+        alert("Tipo de usuário desconhecido.");
+      }
+    } else {
+      alert("Usuário não encontrado no banco.");
+    }
+  } catch (error) {
+    alert("Erro no login: " + error.message);
+  }
 }
 
-function handleLogin() {
-  // Aqui você poderia validar usuário/senha antes de redirecionar
-  router.push('/')
-}
 </script>
 
 <style scoped>

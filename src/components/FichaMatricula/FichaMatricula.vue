@@ -5,7 +5,7 @@
       <div class="ficha-matricula">
         <div class="header">
           <h1>Ficha de Matrícula</h1>
-          <div class="acoes">
+          <div class="acoes" v-if="tipoUsuario === 'adm'">
             <a href="#" class="editar">✎ Editar ficha</a>
             <a href="#" class="excluir">🗑️ Excluir ficha</a>
           </div>
@@ -14,57 +14,57 @@
         <section class="secao">
           <h2><span class="material-icons">person</span> Dados do Aluno</h2>
           <div class="grid">
-            <div><strong>Nome completo:</strong> Nicole Alves da Silva Oliveira</div>
-            <div><strong>Idade:</strong> 10 anos</div>
-            <div><strong>Sexo:</strong> Feminino</div>
-            <div><strong>RG:</strong> 9248345</div>
-            <div><strong>CPF:</strong> 12345678912</div>
-            <div><strong>Escolaridade:</strong> 4° ano do Ensino Fundamental</div>
-            <div><strong>Nacionalidade:</strong> Brasileira</div>
-            <div><strong>Emergência:</strong> Jonatas Morais da Silva - (81) 9 9845-6536</div>
+            <div><strong>Nome completo:</strong>{{ aluno?.aluno?.nome }}</div>
+            <div><strong>Idade:</strong> {{ aluno?.aluno?.idade }}</div>
+            <div><strong>Sexo:</strong> {{ aluno?.aluno?.sexo }}</div>
+            <div><strong>RG:</strong> {{ aluno?.aluno?.rg }}</div>
+            <div><strong>CPF:</strong> {{ aluno?.aluno?.cpf }}</div>
+            <div><strong>Escolaridade:</strong> {{ aluno?.aluno?.escolaridade }}</div>
+            <div><strong>Nacionalidade:</strong>{{ aluno?.aluno?.nacionalidade }}</div>
+            <div><strong>Nome para Emergência:</strong> {{ aluno?.aluno?.emergenciaNome }}</div>
+            <div><strong>Telefone de Emergência:</strong> {{ aluno?.aluno?.emergenciaTelefone }}</div>
           </div>
         </section>
 
         <section class="secao">
           <h2><span class="material-icons">school</span> Acadêmico</h2>
-          <div class="grid">
-            <div><strong>Turma:</strong> Infantil</div>
-            <div><strong>Curso:</strong> Robótica</div>
-            <div><strong>Período:</strong> Jardim</div>
+          <div class="grid1" v-for="(curso, index) in aluno?.academico" :key="index">
+            <div><strong>Curso:</strong>{{ curso.curso }}</div>
+            <div><strong>Turno:</strong>{{ curso.turno }}</div>
           </div>
         </section>
 
         <section class="secao">
           <h2><span class="material-icons">location_on</span> Endereço</h2>
           <div class="grid">
-            <div><strong>Cidade:</strong> Jaboatão dos Guararapes</div>
-            <div><strong>Bairro:</strong> Barro de Jiquiá</div>
-            <div><strong>Reside com:</strong> Pai e Mãe</div>
-            <div><strong>CEP:</strong> 54342-037</div>
-            <div><strong>Rua:</strong> 1 Travessa Sérvél</div>
-            <div><strong>Número:</strong> 437</div>
+            <div><strong>Cidade:</strong> {{aluno?.endereco?.cidade}}</div>
+            <div><strong>Bairro:</strong>{{ aluno?.endereco?.bairro }}</div>
+            <div><strong>Reside com:</strong>{{ aluno?.endereco?.resideCom }}</div>
+              <div><strong>CEP:</strong>{{ aluno?.endereco?.cep }}</div>
+            <div><strong>Rua:</strong>{{ aluno?.endereco?.rua }}</div>
+            <div><strong>Número:</strong>{{ aluno?.endereco?.numero }}</div>
           </div>
         </section>
 
         <section class="secao">
           <h2><span class="material-icons">person_outline</span> Dados do Responsável</h2>
-          <div class="grid">
-            <div><strong>Nome:</strong> Fernanda da Luz Ribeiro</div>
-            <div><strong>Idade:</strong> 28 anos</div>
-            <div><strong>Escolaridade:</strong> Ensino médio completo</div>
-            <div><strong>Ocupação:</strong> Autônoma</div>
-            <div><strong>Telefone:</strong> (83) 98452-4456</div>
-            <div><strong>E-mail:</strong> donafernandaribeiro@gmail.com</div>
+          <div class="grid" v-for="(responsavel, index) in aluno?.responsavel" :key="index">
+            <div><strong>Nome:</strong>{{ responsavel.nome }}</div>
+            <div><strong>Daata de nascimento:</strong>{{responsavel.dataNascimento}}</div>
+            <div><strong>Escolaridade:</strong>{{ responsavel.escolaridade }}</div>
+            <div><strong>Ocupação:</strong>{{ responsavel.ocupacao }}</div>
+            <div><strong>Telefone:</strong>{{ responsavel.telefone }}</div>
+            <div><strong>E-mail:</strong>{{ responsavel.email }}</div>
           </div>
         </section>
 
         <section class="secao">
           <h2><span class="material-icons">medical_services</span> Saúde</h2>
-          <div class="grid">
-            <div><strong>Possui alergia?</strong> Amendoim e Dipirona</div>
-            <div><strong>Toma alguma medicação?</strong> Não</div>
-            <div><strong>Tem algum problema de saúde?</strong> Não</div>
-            <div><strong>Possui alguma deficiência?</strong> Não</div>
+          <div class="grid" v-for="(saude, index) in aluno?.saude" :key="index">
+            <div><strong>Possui alergia?</strong>{{ saude.alergia }}</div>
+            <div><strong>Toma alguma medicação?</strong>{{saude.medicacao}}</div>
+            <div><strong>Tem algum problema de saúde?</strong>{{ saude.problemaSaude }}</div>
+            <div><strong>Possui alguma deficiência?</strong>{{ saude.deficiencia }}</div>
           </div>
         </section>
 
@@ -77,13 +77,40 @@
 </template>
 
 <script>
+import { db, auth } from "../../Firebase/FIrebase";
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import SidebarMenu from '../sideBar/menu.vue';
 
 export default {
   name: "FichaMatricula",
-  components: {
-    SidebarMenu,
+  props: ['id'],
+  components: {SidebarMenu},
+  data() {
+    return {
+      aluno: null,
+      tipoUsuario: null,
+    };
   },
+  async mounted(){
+      onAuthStateChanged(auth, async (user) =>{
+        if (!user) 
+        return;
+      const profRef = doc(db, "professores", user.uid);
+      const profSnap = await getDoc(profRef);
+
+      if(profSnap.exists()) {
+        this.tipoUsuario = profSnap.data().tipo;
+      }
+
+      const alunoRef = doc(db, "alunos", this.id);
+      const alunoSnap = await getDoc(alunoRef);
+
+      if(alunoSnap.exists()) {
+        this.aluno = alunoSnap.data();
+      }
+    });
+  }
 };
 </script>
 
@@ -146,7 +173,13 @@ export default {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 10px 20px;
+  gap: 10px;
+}
+
+.grid1{
+  color: #2d2d2d;
+  display: flex;
+  gap: 20px;
 }
 
 .grid div {
