@@ -10,9 +10,9 @@ import teste from "../components/login/teste.vue";
 
 
 const routes = [
-  { path: '/', component: homeSecretaria },
+  { path: '/home', component: homeSecretaria },
   {path: '/presenceCalendar', component: PresenceCalendar},
-  {path: '/login', component: login},
+  {path: '/', component: login},
   { path: '/matricula/:id', name: 'FichaMatricula', component: () => import('../components/FichaMatricula/FichaMatricula.vue'), props: true},
   { path:'/cadastro', name:'CadastroAluno', component:CadastroAluno},
   { path:'/frequenciaAtividade', name:'frequenciaAtividade', component:frequenciaAtividade},

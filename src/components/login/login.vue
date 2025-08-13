@@ -87,9 +87,9 @@ async function handleLogin() {
 }
 
 .form-container{
-    width: 400px;
-    height: 120VH;
-    margin-left: 30rem;
+    width: 600px;
+    height: 70VH;
+    margin-left: 20rem;
 }
 
 .form-group{
@@ -101,7 +101,7 @@ async function handleLogin() {
 }
 
 .form-group label{
-    text-align: center;
+    text-align: right;
     font-size: 16px;
     letter-spacing: 2px;
     font-weight: bold;
@@ -114,6 +114,7 @@ async function handleLogin() {
     border: none;
     background-color: #86b2ad;
     color: #fff;
+
     
 }
 
@@ -166,10 +167,6 @@ input::placeholder{
     height: 100vh;
 }
 
-.img-form{
-    margin-top: 10rem;
-}
-
 .img-form img{
     width: 350px;
 }
@@ -207,10 +204,14 @@ input::placeholder{
 }
 
 @media (max-width: 1366px) {
-    .form-container {
-     margin-left: 15rem;
-     margin-bottom: 5rem;
-      }
+  
+
+  .form-container {
+    margin: 0; /* remove margin fixa */
+    margin-left: 13rem; /* dá um espaço da borda direita */
+    width: 400px;
+  }
+
 
     .toggle-password{
     width: 10%;
