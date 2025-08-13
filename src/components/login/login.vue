@@ -56,9 +56,9 @@ async function handleLogin() {
       const usuario = docSnap.data();
 
       if (usuario.tipo === "professor") {
-        router.push("/"); // rota da tela de presença
+        router.push("/home"); // rota da tela de presença
       } else if (usuario.tipo === "adm") {
-        router.push("/"); // exemplo de outra rota para adm
+        router.push("/home"); // exemplo de outra rota para adm
       } else {
         alert("Tipo de usuário desconhecido.");
       }
