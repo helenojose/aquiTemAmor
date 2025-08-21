@@ -294,21 +294,21 @@ export default {
   }
   .img-content img{
     width: 100px;
-    margin-top: 5rem;
+    margin-top: 2rem;
     margin-left: 30px;
   }
   .home-container.open {
     left: 0; /* aparece */
   }
   .menu-content{
-    margin-top: 6rem;
+    margin-top: 1rem;
   }
   .icone {
-    height: 80px;
+    height: 50px;
   }
   .icone p{
-     width: 100px;
-    font-size: 12px;
+     width: 80px;
+    font-size: 10px;
   }
 }
 

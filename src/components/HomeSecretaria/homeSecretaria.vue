@@ -448,13 +448,18 @@ export default {
 /* ========================= */
 @media (max-width: 768px) {
    .main-content {
-    width: 90%;        /* ocupa quase toda a tela */
-    margin: 50px auto; /* centraliza horizontalmente */
-    padding: 0;        /* remove padding que atrapalha */
+    width: 90%;
+    height: 60vh;
+    margin: 70px auto; 
+    padding: 0;
     display: grid;
     grid-template-rows: auto auto 1fr;
     gap: 1rem;
     font-size: clamp(12px, 4vw, 16px);
+  }
+  .main-content h1{
+    font-size: 22px;
+    width: 220px;
   }
   .text-fixed h2{
     color: transparent;
