@@ -33,7 +33,7 @@
       <div class="students-container" v-if="filteredStudents.length">
         <div class="quantity-column">
           <div class="text-fixed">
-            <h2>Quantidade</h2>
+            <h2>Matricula</h2>
           </div>
           
           <ul>
@@ -407,70 +407,53 @@ input::placeholder {
 
 /* Media Query para telas grandes e médias */
 
-@media (max-width: 1440px) {
-  .main-content {
-    width: 85%;
-    height: 85vh;
-    font-size: 22px;
-    margin-left: 250px;
-  }
-  .search-bar {
-    grid-template-columns: calc(100% - 90px) 90px;
-    gap: 1rem;
-  }
-  .students-container {
-    width: 85%;
-    padding-right: 2rem;
-  }
-  .text-fixed h2 {
-    width: 140px;
-    font-size: 18px;
-  }
-  .text-fixed1 h2 {
-    width: 800px;
-    font-size: 18px;
-  }
-}
 
 @media (max-width: 1366px) {
   .main-content {
-    width: 800px;
-    height: 550px;
+    width: 750px;
+    height: 500px;
     font-size: 20px;
-    margin: 20px 0 0 250px;
+    margin: 0 0 0 200px;
   }
   .search-bar {
-    grid-template-columns: 830px 70px;
+    grid-template-columns: 750px 70px;
     gap: 1rem;
+    margin: -30px 0 0 0;
   }
   .students-container {
-    grid-template-columns: 120px 700px;
-    width: 95%;
-    padding-right: 2rem;
+    grid-template-columns: 120px 100px;
+    width: auto;
   }
   .text-fixed h2 {
-    width: 100px;
+    width: 80px;
     font-size: 14px;
   }
   .text-fixed1 h2 {
     width: 675px;
     font-size: 15px;
+    margin-right: 1rem;
+
   }
   .student-modalidades {
     color: #118678;
     padding-left: 0.2rem;
   }
   .student-name {
-    padding-right: 0.5rem;
-    font-size: 13px;
+    font-size: 14px;
+
   }
   .modal-badge {
     font-size: 0.55rem;
   }
-  .quantity-column ul li,
+  .quantity-column ul li{
+    padding-top: 0.3rem;
+    height: 45px;
+    width: 100px;
+  }
   .student-column ul li {
     padding-top: 0.3rem;
     height: 45px;
+    width: 690px;
   }
   .numeros {
     padding-top: 0.5rem;
@@ -478,55 +461,17 @@ input::placeholder {
   }
 }
 
-@media (max-width: 1024px) {
-  .main-content {
-    margin-top: 10px;
-    margin-left: 250px;
-    width: 780px;
-    height: 750px;
-  }
-  .search-bar {
-    grid-template-columns: 650px 70px;
-    gap: 1rem;
-  }
-  .students-container {
-    grid-template-columns: 100px 530px;
-    width: 80%;
-    scrollbar-width: unset;
-  }
-}
-
-/* --- desktop: nada muda, fica como está --- */
-
-
-/* --- celular: tudo menor, menu escondido, layout simples --- */
 @media (max-width: 768px) {
 
-  /* Esconde menu lateral */
-  .home-container {
-    display: none !important;
-  }
 
-  /* Botão hamburger fica visível */
-  .mobile-menu-toggle {
-    display: block !important;
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 10000;
-    font-size: 2rem;
-    background: transparent;
-    border: none;
-    color: #118678;
-  }
 
   /* Ajusta container principal para ocupar toda tela */
   .main-content {
-    margin-left: 0 !important;
-    width: 80% !important;
-    height: 50vh;
-    padding: 30px;
-    font-size: 12px !important;
+    margin-left: 0 ;
+    width: 80% ;
+    height: 90vh;
+    padding: 20px;
+    font-size: 12px;
   }
   .search-bar {
   display: flex !important;
@@ -535,61 +480,26 @@ input::placeholder {
   align-items: center;
   width: 100%;
   gap: 0.5rem;
+
 }
 
   .coluna {
   flex: 1 1 auto;
   display: flex;
   align-items: center;
-  padding: 0.4rem;
   border-radius: 0.5rem;
   background-color: #118678;
- 
-}
 
+}
 .coluna i {
-  padding-left: 0;
+  padding: 0 0 5px 10px !important;
   font-size: .8rem;
 }
 
-.coluna input[type="search"] {
-  width: 100%;
-  font-size: 0.8rem;
-  padding: 0.4rem;
-}
 
-.coluna3 {
-  flex-shrink: 0;
-  background-color: #118678;
-  border-radius: 0.5rem;
-  padding: 0.4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-  /* Exemplo: deixa o título menor */
-  h1 {
-    width: 200px;
-    padding-top: 16px;
-    font-size: 1.2rem !important;
-  }
-  .text-fixed1 h2{
-    width: 300px;
-    margin-top: -50px;
-    font-size: 12px;
-  }
-
-  /* Deixa inputs e botões menores */
-  input[type="search"] {
-    font-size: .7rem !important;
-    padding: 10px !important;
-    width: 100px;
-  }
   .coluna input[type="search"] {
-  width: 100%;
+  width: 80%;
   font-size: 0.8rem;
-  padding: 0.4rem;
   color: white; /* mostra o texto digitado */
   background-color: transparent;
   border: none;
@@ -601,8 +511,26 @@ input::placeholder {
   color: white;
   opacity: 0.7;
 }
+.coluna3 {
+  flex-shrink: 0;
+  background-color: #118678;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-
+  /* Exemplo: deixa o título menor */
+  h1 {
+    width: 200px;
+    padding-top: 30px;
+    font-size: 1.2rem !important;
+  }
+  .text-fixed1 h2{
+    width: 300px;
+    margin: -50px -60px;
+    font-size: 12px;
+  }
   button.filter-btn {
     font-size: 1rem !important;
     padding: 5px 10px !important;
@@ -610,34 +538,44 @@ input::placeholder {
 
   /* Lista de alunos fica coluna única, textos menores */
   .students-container {
-    grid-template-columns: 1fr !important;
-    padding-right: 0 !important;
-    margin-top: 30px !important;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1px;
+    padding-right: 0 ;
+    margin: 30px 0 0 0;
     width: 325px;
-  }
-  input{
-    width: 100px;
-    font-size: 10px;
+
   }
 
   .student-column ul li {
-    font-size: 0.6rem !important;
-    padding: 7px !important;
+    padding: 4px;
+    width: 265px;
   }
+  .student-name{
+    font-size: 0.7rem ;
+        padding-top: 5px;
+  }
+  .modal-badge{
 
+    font-size: 0.5rem ;
+  }
   /* Esconde a coluna dos números */
   .quantity-column {
-    display: none !important;
+    display: flex;
+  }
+  .numeros{
+    font-size: 11px;
+    width: 50px;
+    padding: 15px 3px !important;
   }
 
-  /* Número ao lado do nome (no próprio li) */
-  .numeros-mobile {
-    display: inline-block !important;
-    margin-right: 10px;
-    font-weight: 700;
-    color: #118678;
+  .quantity-column li{
+    width: 60px !important;
+    padding: 0 !important;
   }
-
+  .text-fixed{
+    display: none;
+  }
 
   .filter-menu {
     position: absolute !important;
@@ -657,18 +595,11 @@ input::placeholder {
   }
 
   .filter-menu label {
-    margin-right: 1.2rem;
+    margin-right: 1.5rem;
     cursor: pointer;
     font-size: 10px;
   
-}
-
-.filter-menu input[type="checkbox"] {
-  margin: 0;            /* remove margens que podem desalinhar */
-  transform: scale(0.9);
-
-}
-
+  }
 }
 
 /* Esconde o botão hamburger no desktop */

@@ -189,7 +189,6 @@ input::placeholder{
   .form-group input,
   .form-button button {
     width: 350px;
-    /* Utilizei um valor intermediário entre 400px e o 300px da tela de 1366px */
     padding: 0.9rem;
   }
 
@@ -285,9 +284,9 @@ input::placeholder{
 
 @media (max-width: 768px) {
   .form-container {
-
     width: 80%;
-    height: auto;
+    height: 70vh;
+    margin-bottom: 5rem;
   }
 
   .toggle-password{
@@ -316,7 +315,6 @@ input::placeholder{
   .login-container {
     justify-content: center;
     flex-direction: column;
-    
   }
 }
 
