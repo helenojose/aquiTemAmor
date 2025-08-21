@@ -449,7 +449,7 @@ export default {
 @media (max-width: 768px) {
    .main-content {
     width: 90%;
-    height: 60vh;
+    height: 69vh;
     margin: 70px auto; 
     padding: 0;
     display: grid;
