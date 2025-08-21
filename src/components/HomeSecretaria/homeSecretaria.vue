@@ -1,18 +1,40 @@
 <template>
   <div>
     <Menu />
+
     <div class="main-content">
       <h1>Bem-vindo(a) à Secretaria Digital!</h1>
 
       <div class="search-bar">
         <div class="coluna">
           <i class="bi bi-search"></i>
-          <input type="search" placeholder="Digite o nome da criança..." v-model="searchQuery"/>
+          <input
+            type="search"
+            placeholder="Digite o nome da criança..."
+            v-model="searchQuery"
+          />
         </div>
-        <div class="coluna3">
+
+        <div class="coluna3" style="position: relative;">
           <button class="filter-btn" @click.stop="toggleFilterMenu">
             <i class="bi bi-funnel"></i>
           </button>
+
+          <div
+            v-if="showFilterMenu"
+            class="filter-menu"
+            v-outside="closeFilterMenu"
+            @click.stop
+          >
+            <label v-for="opt in filterOptions" :key="opt.value">
+              <input type="checkbox" v-model="selectedFilters" :value="opt.value" />
+              {{ opt.label }}
+            </label>
+          </div>
+
+
+
+
           <div
             class="filter-menu"
             v-if="showFilterMenu"
@@ -20,55 +42,58 @@
             @click.stop
           >
             <label v-for="opt in filterOptions" :key="opt.value">
-              <input
-                type="checkbox"
-                v-model="selectedFilters"
-                :value="opt.value"
-              />
+              <input type="checkbox" v-model="selectedFilters" :value="opt.value" />
               {{ opt.label }}
             </label>
           </div>
         </div>
       </div>
+
       <div class="students-container" v-if="filteredStudents.length">
         <div class="quantity-column">
           <div class="text-fixed">
             <h2>Matricula</h2>
           </div>
-          
+
           <ul>
             <li v-for="(student, index) in filteredStudents" :key="student.id">
-             <div class="numeros">
+              <div class="numeros">
                 Nº {{ index + 1 < 10 ? '0' + (index + 1) : index + 1 }}
-             </div> 
+              </div>
             </li>
           </ul>
         </div>
+
         <div class="student-column">
           <div class="text-fixed1">
             <h2>Alunos Matriculados</h2>
           </div>
-          
+
           <ul>
-            <li v-for="student in filteredStudents" :key="student.id + '-name'" @click="goToFicha(student) " style="cursor: pointer;">
+            <li
+              v-for="student in filteredStudents"
+              :key="student.id + '-name'"
+              @click="goToFicha(student)"
+              style="cursor: pointer;"
+            >
               <div class="student-name">{{ student.name }}</div>
               <div class="student-modalidades">
-              <span
-                v-for="(mod, index) in student.modalidade"
-                :key="index"
-                class="modal-badge"
-              >
-                {{ mod }}
-              </span>
-            </div>
-          </li>
-            
+                <span
+                  v-for="(mod, index) in student.modalidade"
+                  :key="index"
+                  class="modal-badge"
+                >
+                  {{ mod }}
+                </span>
+              </div>
+            </li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import Menu from "../sideBar/menu.vue";
@@ -79,6 +104,7 @@ import { auth } from "../../Firebase/FIrebase";
 
 export default {
   components: { Menu },
+
   directives: {
     outside: {
       beforeMount(el, binding) {
@@ -87,125 +113,136 @@ export default {
             binding.value(event);
           }
         };
-        document.addEventListener('click', el.clickOutsideEvent);
+        document.addEventListener("click", el.clickOutsideEvent);
       },
       unmounted(el) {
-        document.removeEventListener('click', el.clickOutsideEvent);
+        document.removeEventListener("click", el.clickOutsideEvent);
       }
     }
   },
+
   data() {
     return {
-      searchQuery: '',
+      searchQuery: "",
       students: [],
       filterOptions: [
-        { label: 'REFORÇO',   value: 'REFORÇO' },
-        { label: 'MUAI TAY',  value: 'MUAI TAY' },
-        { label: 'NATAÇÃO',   value: 'NATAÇÃO' },
-        { label: 'BALLET',    value: 'BALLET' },
-        { label: 'JUDÔ',      value: 'JUDÔ' }
+        { label: "REFORÇO", value: "REFORÇO" },
+        { label: "MUAI TAY", value: "MUAI TAY" },
+        { label: "NATAÇÃO", value: "NATAÇÃO" },
+        { label: "BALLET", value: "BALLET" },
+        { label: "JUDÔ", value: "JUDÔ" }
       ],
       selectedFilters: [],
       showFilterMenu: false
     };
   },
+
   mounted() {
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
+    onAuthStateChanged(auth, async user => {
+      if (!user) return;
 
-    const profSnapshot = await getDocs(collection(db, "professores"));
-    let usuarioAtual = null;
+      const profSnapshot = await getDocs(collection(db, "professores"));
+      let usuarioAtual = null;
 
-    profSnapshot.forEach(doc => {
-      if (doc.id === user.uid) {
-        usuarioAtual = doc.data();
-      }
-    });
-
-    if (!usuarioAtual) return;
-
-    const alunosCollection = collection(db, "alunos");
-
-    onSnapshot(alunosCollection, (snapshot) => {
-      const alunos = [];
-
-      snapshot.forEach(doc => {
-        const aluno = doc.data();
-
-        if (!aluno.aluno || !aluno.aluno.nome) return; // pula documentos inválidos
-
-        const alunoModalidades = Array.isArray(aluno.academico) 
-          ? aluno.academico.map(a => a.curso) 
-          : [];
-
-        const profModalidades = usuarioAtual.modalidades || [];
-
-        if (
-          usuarioAtual.tipo === "adm" ||
-          alunoModalidades.some(modalidade => profModalidades.includes(modalidade))
-        ) {
-          alunos.push({
-            id: doc.id,
-            name: aluno.aluno.nome,
-            modalidade: alunoModalidades,
-          });
+      profSnapshot.forEach(doc => {
+        if (doc.id === user.uid) {
+          usuarioAtual = doc.data();
         }
       });
 
+      if (!usuarioAtual) return;
 
-      this.students = alunos;
+      const alunosCollection = collection(db, "alunos");
+
+      onSnapshot(alunosCollection, snapshot => {
+        const alunos = [];
+
+        snapshot.forEach(doc => {
+          const aluno = doc.data();
+
+          if (!aluno.aluno || !aluno.aluno.nome) return; // pula documentos inválidos
+
+          const alunoModalidades = Array.isArray(aluno.academico)
+            ? aluno.academico.map(a => a.curso)
+            : [];
+
+          const profModalidades = usuarioAtual.modalidades || [];
+
+          if (
+            usuarioAtual.tipo === "adm" ||
+            alunoModalidades.some(modalidade =>
+              profModalidades.includes(modalidade)
+            )
+          ) {
+            alunos.push({
+              id: doc.id,
+              name: aluno.aluno.nome,
+              modalidade: alunoModalidades
+            });
+          }
+        });
+
+        this.students = alunos;
+      });
     });
-  });
-},
-
+  },
 
   computed: {
     filteredStudents() {
-      // Primeiro, filtra pelo nome
-      let results = this.students.filter(s => {
-        return s.name.toLowerCase().includes(this.searchQuery.trim().toLowerCase());
-      });
-      // Em seguida, aplica filtros de modalidade se houver
+      // Filtra pelo nome
+      let results = this.students.filter(s =>
+        s.name.toLowerCase().includes(this.searchQuery.trim().toLowerCase())
+      );
+
+      // Aplica filtros de modalidade se houver
       if (this.selectedFilters.length) {
         results = results.filter(s =>
-          s.modalidade.some (mod => this.selectedFilters.includes(mod))
+          s.modalidade.some(mod =>
+            this.selectedFilters.some(f => f.toLowerCase().trim() === mod.toLowerCase().trim())
+          )
         );
       }
+
+
       return results;
     }
   },
+
   methods: {
     toggleFilterMenu() {
       this.showFilterMenu = !this.showFilterMenu;
     },
+
     closeFilterMenu() {
       this.showFilterMenu = false;
     },
-    goToFicha(aluno){
-      if(!aluno || !aluno.id){  
-        console.error("Aluno invalido:", aluno)
-        return
-        }
-      this.$router.push({name: 'FichaMatricula', params: {id: aluno.id } });
+
+    goToFicha(aluno) {
+      if (!aluno || !aluno.id) {
+        console.error("Aluno inválido:", aluno);
+        return;
+      }
+      this.$router.push({ name: "FichaMatricula", params: { id: aluno.id } });
     }
   }
-}
+};
 </script>
 
-<style scoped>
 
+<style scoped>
 .student-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
+
+
 }
 
 .student-name {
   font-weight: 500;
   max-width: 100%;
   overflow-wrap: anywhere;
+  font-size: clamp(11px, 1.5vw, 14px);
 }
 
 .student-modalidades {
@@ -214,6 +251,8 @@ export default {
   flex-wrap: wrap;
   justify-content: flex-start;
   max-width: 100%;
+  margin-top: .2rem;
+
 }
 
 .modal-badge {
@@ -221,79 +260,94 @@ export default {
   color: #fff;
   padding: 0.2rem 0.6rem;
   border-radius: 12px;
-  font-size: 0.75rem;
+  font-size: clamp(8px, 1vw, 11px);
   white-space: nowrap;
+  
 }
 
 .main-content {
-  width: 90%;
-  height: 90vh;
-  margin: 20px 0 0 250px;
+  width: min(80%, 1200px);
+  margin: 20px auto 0 auto;
   display: grid;
   grid-template-rows: auto auto 1fr;
   gap: 1.5rem;
   font-family: lexend;
-  font-size: 25px;
+  font-size: clamp(14px, 2vw, 20px);
+  
 }
 
 .search-bar {
-  position: relative;
-  border-radius: 0.7rem;
-  color: #fff;
   display: grid;
-  grid-template-columns: 1210px 90px;
-  gap: 1.5rem;
-  font-size: 20px;
+  grid-template-columns: 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  color: #fff;
 }
 
 .coluna {
   background: #118678;
-  padding-left: 0.1rem;
-  padding-top: 0.5rem;
-  border-top-left-radius: 1rem;
-  border-bottom-left-radius: 1rem;
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.coluna i {
+  margin-right: 0.5rem;
+  font-size: clamp(12px, 2vw, 18px);
+}
+
+.coluna input[type="search"] {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #fff;
+  outline: none;
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+
+.coluna input[type="search"]::placeholder {
+  color: #e0e0e0;
 }
 
 .coluna3 {
-  background-color: #118678;
-  text-align: center;
-  padding: 0.5rem 0.1rem;
-  border-top-right-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  font-size: 20px;
+  background: #118678;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
 }
 
 .filter-btn {
   background: transparent;
   border: none;
-  padding: 0.6rem 0.75rem;
   cursor: pointer;
   color: #fff;
+  font-size: clamp(14px, 2vw, 18px);
 }
 
 .filter-menu {
   position: absolute;
-  top: 220%;
-  left: 78%;
-  transform: translateY(-50%);
+  top: 100%;
+  right: 0;
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
-  margin-left: 0.5rem;
   padding: 0.75rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   z-index: 10;
+  min-width: 150px;
 }
 
 .filter-menu label {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.9rem;
+  font-size: clamp(12px, 1.5vw, 14px);
   color: #333;
 }
 
@@ -301,38 +355,18 @@ export default {
   transform: scale(1.1);
 }
 
-.search-bar .coluna i {
-  padding-left: 2rem;
-}
-
-input::placeholder {
-  color: #e0e0e0;
-}
-
-.search-bar input[type="search"] {
-  padding: 0.7rem 1rem;
-  border: none;
-  background-color: transparent;
-  color: #fff;
-  outline: none;
-}
-
-/* Lista de alunos */
 .students-container {
-  margin-top: 4rem;
-  width: 70%;
   display: grid;
-  grid-template-columns: 15% 1fr;
+  grid-template-columns: minmax(50px, 15%) 1fr;
   gap: 1rem;
+  width: 100%;
   overflow-y: auto;
-  padding-right: 7rem;
-  scrollbar-width: unset;
-  scrollbar-color: #118678 #e0e0e0;
-  font-size: 20px;
+  padding-right: 1rem;
+  font-size: clamp(12px, 1.5vw, 16px);
 }
 
 .students-container::-webkit-scrollbar {
-  width: 20px;
+  width: 12px;
 }
 
 .students-container::-webkit-scrollbar-track {
@@ -350,32 +384,16 @@ input::placeholder {
   background-color: #22C574;
 }
 
-.text-fixed h2 {
-  margin-top: -4rem;
-  font-size: 20px;
-  width: 160px;
-  background-color: #118678;
-  padding: 0.7rem;
-  border-radius: 0.5rem;
-  color: #fff;
-  text-align: center;
-  position: fixed;
-}
-
+.text-fixed h2,
 .text-fixed1 h2 {
-  margin-top: -4rem;
-  font-size: 20px;
-  width: 980px;
+  font-size: clamp(12px, 1.5vw, 18px);
   background-color: #118678;
   padding: 0.7rem;
   border-radius: 0.5rem;
   color: #fff;
   text-align: center;
-  position: fixed;
-}
-
-.quantity-column ul {
-  text-align: center;
+  position: sticky;
+  top: 0;
 }
 
 .quantity-column ul,
@@ -390,219 +408,105 @@ input::placeholder {
 
 .quantity-column ul li,
 .student-column ul li {
-  background: #fff;
-  padding: 1rem 1rem;
+  background: #fff;  padding: 0.8rem;
   border-radius: 1rem;
-  height: 75px;
   box-sizing: border-box;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  flex-direction: column; /* empilha */
+  align-items: flex-start;
 }
-
-.quantity-column ul li {
-  padding-top: 1.5rem;
+.student-column ul li{
+  height: 20px;
+  padding-top: .1rem;
 }
 
 .numeros {
-  font-size: 23px;
+  font-size: clamp(12px, 1.5vw, 18px);
+}
+.text-fixed h2::after{
+  content: "";
 }
 
-/* Media Query para telas grandes e médias */
-
-
-@media (max-width: 1366px) {
+@media (max-width: 1336px) {
   .main-content {
-    width: 750px;
-    height: 500px;
-    font-size: 20px;
-    margin: 0 0 0 200px;
-  }
-  .search-bar {
-    grid-template-columns: 750px 70px;
-    gap: 1rem;
-    margin: -30px 0 0 0;
-  }
-  .students-container {
-    grid-template-columns: 120px 100px;
-    width: auto;
-  }
-  .text-fixed h2 {
-    width: 80px;
-    font-size: 14px;
-  }
-  .text-fixed1 h2 {
-    width: 675px;
-    font-size: 15px;
-    margin-right: 1rem;
-
-  }
-  .student-modalidades {
-    color: #118678;
-    padding-left: 0.2rem;
-  }
-  .student-name {
-    font-size: 14px;
-
-  }
-  .modal-badge {
-    font-size: 0.55rem;
-  }
-  .quantity-column ul li{
-    padding-top: 0.3rem;
-    height: 45px;
-    width: 100px;
-  }
-  .student-column ul li {
-    padding-top: 0.3rem;
-    height: 45px;
-    width: 690px;
-  }
-  .numeros {
-    padding-top: 0.5rem;
-    font-size: 15px;
-  }
-}
-
-@media (max-width: 768px) {
-  /* Ajusta container principal para ocupar toda tela */
-  .main-content {
-    margin-left: 0 ;
-    width: 80% ;
-    height: 90vh;
-    padding: 70px 0 0 30px ;
-    font-size: 12px;
-  }
-  .search-bar {
-  display: flex !important;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 0.5rem;
-
-}
-
-  .coluna {
-  flex: 1 1 auto;
-  display: flex;
-  align-items: center;
-  border-radius: 0.5rem;
-  background-color: #118678;
-
-}
-.coluna i {
-  padding: 0 0 5px 10px !important;
-  font-size: .8rem;
-}
-
-
-  .coluna input[type="search"] {
-  width: 80%;
-  font-size: 0.8rem;
-  color: white; /* mostra o texto digitado */
-  background-color: transparent;
-  border: none;
-  outline: none;
-}
-
-/* placeholder visível */
-.coluna input[type="search"]::placeholder {
-  color: white;
-  opacity: 0.7;
-}
-.coluna3 {
-  flex-shrink: 0;
-  background-color: #118678;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-  /* Exemplo: deixa o título menor */
-  h1 {
-    width: 200px;
-    padding-top: 30px;
-    font-size: 1.2rem !important;
-  }
-  .text-fixed1 h2{
-    width: 300px;
-    margin: -50px -60px;
-    font-size: 12px;
-  }
-  button.filter-btn {
-    font-size: 1rem !important;
-    padding: 5px 10px !important;
-  }
-
-  /* Lista de alunos fica coluna única, textos menores */
-  .students-container {
+    width: min(70%, 1200px);
+    margin: 5px auto ; /* centraliza horizontalmente */
+    padding-right: 10rem;
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1px;
-    padding-right: 0 ;
-    margin: 30px 0 0 0;
-    width: 325px;
+    grid-template-rows: auto auto 1fr;
+    gap: 1.5rem;
+    font-family: lexend;
+    font-size: clamp(12px, 2vw, 20px);
+  }
+}
 
+
+/* ========================= */
+/* 📱 Ajustes para celular   */
+/* ========================= */
+@media (max-width: 768px) {
+   .main-content {
+    width: 90%;        /* ocupa quase toda a tela */
+    margin: 50px auto; /* centraliza horizontalmente */
+    padding: 0;        /* remove padding que atrapalha */
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 1rem;
+    font-size: clamp(12px, 4vw, 16px);
+  }
+  .text-fixed h2{
+    color: transparent;
+  }
+  .text-fixed h2::after {
+    color: #fff;
+    content: "M";
+    position: absolute;
+    left: 25px;
+    top: 10px;
+  }
+  .students-container {
+    grid-template-columns:60px 1fr; /* vira 1 coluna */
   }
 
+  .student-row {
+    flex-direction: column; /* empilha */
+    align-items: flex-start;
+  }
+
+  .quantity-column ul li,
   .student-column ul li {
-    padding: 4px;
-    width: 265px;
+    flex-direction: column; /* número em cima */
+    align-items: flex-start;
   }
-  .student-name{
-    font-size: 0.7rem ;
-        padding-top: 5px;
-  }
-  .modal-badge{
+   .quantity-column{
+    width: 60px;
+   }
 
-    font-size: 0.5rem ;
-  }
-  /* Esconde a coluna dos números */
-  .quantity-column {
-    display: flex;
-  }
-  .numeros{
-    font-size: 11px;
-    width: 50px;
-    padding: 15px 3px !important;
+  .student-name {
+    font-size: 12px;
+    font-weight: 600;
   }
 
-  .quantity-column li{
-    width: 60px !important;
-    padding: 0 !important;
+  .student-modalidades {
+    margin-bottom: 0.3rem; /* modalidades abaixo do nome */
   }
-  .text-fixed{
-    display: none;
-  }
-
-  .filter-menu {
-    position: absolute !important;
-    top: 100%;
-    right: auto;        /* Remove o right para não travar do lado direito */
-    left: 90%;          /* Posiciona a partir da metade da largura do container */
-    transform: translateX(-60%); /* Move para a esquerda, mais perto do botão */
-    width: 70px;
-    background: #fff;
+  .filter-menu { 
+    position: absolute !important; 
+    top: 100%; right: auto; 
+    left: 90%;  transform: translateX(-60%);
+    width: 70px; background: #fff; 
     border-radius: 6px;
     padding: .3rem 0.5rem;
     box-shadow: 1px 2px 6px rgba(0,0,0,0.2);
-    gap: 0.3rem;
-    z-index: 9999;
-    align-items: right ; 
-   
-  }
-
-  .filter-menu label {
-    margin-right: 1.5rem;
-    cursor: pointer;
-    font-size: 10px;
-  
+    gap: 0.3rem; z-index: 9999; align-items: right ; 
+  } 
+  .filter-menu label{
+    margin-right: 1.5rem; 
+    cursor: pointer; 
+    font-size: 10px; 
   }
 }
-
-/* Esconde o botão hamburger no desktop */
-.mobile-menu-toggle {
-  display: none;
-}
-
 
 </style>

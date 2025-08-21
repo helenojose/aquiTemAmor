@@ -31,6 +31,7 @@
           <div class="grid1" v-for="(curso, index) in aluno?.academico" :key="index">
             <div><strong>Curso:</strong>{{ curso.curso }}</div>
             <div><strong>Turno:</strong>{{ curso.turno }}</div>
+            <div><strong>Dia:</strong>{{ curso.dia }}</div>
           </div>
         </section>
 

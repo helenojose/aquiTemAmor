@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <!-- Botão hambúrguer (aparece só no mobile) -->
     <button class="mobile-menu-toggle" @click="toggleMenu">
       <i class="bi bi-list"></i>
@@ -14,13 +14,13 @@
       </div>
 
       <div class="menu-content">
-        <router-link to="/">
+        <router-link class="home" to="/home">
           <div class="icone">
             <i class="bi bi-house"></i>
             <p>HOME</p> 
           </div>
         </router-link>
-        <router-link to="cadastro">
+        <router-link class="cad" to="cadastro">
           <div class="icone">
             <i class="bi bi-clipboard-check"></i>
             <p>NOVA MATRICULA</p>
@@ -75,7 +75,9 @@ export default {
 
 
 <style scoped>
-
+.home, .cad {
+  text-decoration: none;
+}
 .menu-placeholder {
   width: 150px;
   height: 100vh;
@@ -166,7 +168,7 @@ export default {
   font-size: 11px;
 }
 
-.menuText{
+.menuText {
   color: white;
   text-decoration: none;
   font-size: 10px;
@@ -205,13 +207,14 @@ export default {
   }
 
   .img-content img {
-    width: 90px;
-    margin-left: 0.5rem;
+    width: 80px;
+    margin-left: 1rem;
   }
 
   .icone {
     font-size: 16px;
-    padding: 0.8rem 0;
+    padding: 0.4rem 0;
+
   }
 
   .icone p {
@@ -289,8 +292,23 @@ export default {
     transition: left 0.3s ease;
     z-index: 1050;
   }
+  .img-content img{
+    width: 100px;
+    margin-top: 5rem;
+    margin-left: 30px;
+  }
   .home-container.open {
     left: 0; /* aparece */
+  }
+  .menu-content{
+    margin-top: 6rem;
+  }
+  .icone {
+    height: 80px;
+  }
+  .icone p{
+     width: 100px;
+    font-size: 12px;
   }
 }
 

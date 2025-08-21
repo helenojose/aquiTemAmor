@@ -67,7 +67,10 @@
                 <button type="button" class="icon-btn remove" @click="removerCurso(index)" v-if="academico.length>1"><i class="bi bi-dash-circle"></i></button>
               </div>
           </div>
-          
+         
+
+         
+        <div class="form-row">
           <div class="form-group">
             <label>Turno<span class="required">*</span></label>
             <select v-model="acad.turno" required>
@@ -77,17 +80,34 @@
               <option>Noite</option>
             </select>
           </div>
+
           <div class="form-group">
             <label>Curso<span class="required">*</span></label>
             <select v-model="acad.curso" required>
               <option value="">Selecione</option>
+              <option>Reforço</option>
               <option>Judô</option>
               <option>Ballet</option>
               <option>Natação</option>
               <option>Muai Tay</option>
             </select>
           </div>
+
+          <div class="form-group">
+            <label>Dia<span class="required">*</span></label>
+            <select v-model="acad.dia" required>
+              <option value="">Selecione</option>
+              <option>Segunda</option>
+              <option>Terça</option>
+              <option>Quarta</option>
+              <option>Quinta</option>
+              <option>Sexta</option>
+            </select>
+          </div>
+        </div>
+
           
+
         </section>
 
         <!-- Endereço -->
@@ -127,10 +147,6 @@
         <section class="form-section saude-row" v-for="(s, sIdx) in saude" :key="sIdx">
           <div class="saude-header">
             <h2><i class="bi bi-heart-pulse"></i> Saúde</h2>
-            <div class="action-buttons">
-            <button type="button" class="icon-btn add" @click="adicionarSaude"><i class="bi bi-plus-circle"></i></button>
-            <button type="button" class="icon-btn remove" @click="removerSaude(sIdx)" v-if="saude.length>1"><i class="bi bi-dash-circle"></i></button>
-          </div>
           </div>
           
           <div class="saude-grid" v-for="(resp, idx) in saude" :key="idx">
@@ -160,7 +176,7 @@ export default {
   data() {
     return {
       aluno: { nome:'', dataNascimento:'', sexo:'', cpf:'', rg:'', escolaridade:'', nacionalidade:'', emergenciaNome:'', emergenciaTelefone:'' },
-      academico:[{turno:'',curso:''}],
+      academico:[{turno:'',curso:'', dia:''}],
       endereco:{cidade:'',bairro:'',resideCom:'',cep:'',rua:'',numero:''},
       responsavel:[{nome:'',tipo:'',dataNascimento:'',escolaridade:'',ocupacao:'',telefone:'',email:''}],
       saude:[{alergia:'',medicacao:'',problemaSaude:'',deficiencia:''}]
@@ -188,7 +204,7 @@ export default {
 
         await addDoc(collection(db, 'alunos'), alunoData);
 
-        this.$router.push("/");
+        this.$router.push("/home");
       } catch (error){
         console.error('Erro ao salvar matrícula: ', error);
         alert('Erro ao salvar. Tente novamente.');
@@ -410,4 +426,14 @@ h2 i {
 .matricular-btn:hover {
   background: #024f42;
 }
+
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; /* espaço entre as divs */
+  flex-wrap: wrap; /* se a tela for pequena, quebra para a linha de baixo */
+}
+
+
 </style>
