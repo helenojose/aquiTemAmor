@@ -462,15 +462,12 @@ input::placeholder {
 }
 
 @media (max-width: 768px) {
-
-
-
   /* Ajusta container principal para ocupar toda tela */
   .main-content {
     margin-left: 0 ;
     width: 80% ;
     height: 90vh;
-    padding: 20px;
+    padding: 70px 0 0 30px ;
     font-size: 12px;
   }
   .search-bar {
